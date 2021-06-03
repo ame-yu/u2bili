@@ -1,3 +1,6 @@
+.env
+meta.json
+downloads/
 # Logs
 logs
 *.log
