@@ -1,7 +1,6 @@
 {
-  "name": "headlessplay",
+  "name": "u2bili",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "type": "module",
   "dependencies": {

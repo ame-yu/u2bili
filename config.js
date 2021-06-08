@@ -1,16 +1,25 @@
-/**
- * # 1. Get Cookie
- * F12->console
- * > document.cookie
- *
- * !IMPORTANT: 2. Concatenate HTTPOnly cookie `SESSDATA` manually.
- * BILIBILI_COOKIE should be like this:
- * DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
- */
+// @ts-check
 
+/**
+ * @type {string}
+ */
 export const metaPath = "./meta.json"
-const cookie = process.env["BILIBILI_COOKIE"]
-export const bilibiliCookies = cookie
+
+/**
+ *  default show browser for windows only
+ *  @type {boolean} */
+export const isTerminal = process.platform !== "win32"
+
+/** @type {string | null} */
+export const storeData = "./data.json"
+
+
+/**
+ * ### 1. Get Cookie
+ * Concatenate HTTPOnly cookie `SESSDATA` manually.
+ * @type {object}
+ */
+export const bilibiliCookies = process.env["BILIBILI_COOKIE"]
   ?.split("; ")
   ?.map((i) => i.split("="))
   ?.reduce((a, b) => {

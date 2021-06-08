@@ -10,8 +10,21 @@
 1. 安装Python
 2. 安装Node
 3. 安装脚本库(有Gitbash的运行init.sh) 或 `npm install playwright && pip install youtube-dl`
-4. 设置bilibili cookies（编辑config.js 或设置`BILIBILI_COOKIE`环境变量）
-5. upload.sh \<url\>
+4. 设置bilibili cookies（编辑config.js或设置`BILIBILI_COOKIE`环境变量）
+5. u2bili.sh \<url\>
+
+<details>
+    <summary>关于获取Cookie</summary>
+    
+登录后F12,Application(应用程序)面板，选择cookie进行查看。
+![Cookie](docs/cookie.jpg)
+填写config.js最后4个参数或设置`BILIBILI_COOKIE`环境变量
+```
+BILIBILI_COOKIE环境变量格式如下：
+DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
+```
+</details>
+
 ## 🍱食材 Frameworks
 - youtube-dl 下载油管用
 - playwright 上传B站用
@@ -25,7 +38,7 @@
 
 使用例：
 ```
-upload.sh https://www.youtube.com/watch?v=aAmP-WcI6dg
+./u2bili.sh https://www.youtube.com/watch?v=aAmP-WcI6dg
 ```
 </details>
 

@@ -1,4 +1,4 @@
-import { bilibiliCookies, metaPath } from "./config.js"
+import { bilibiliCookies, metaPath, isTerminal } from "./config.js"
 import { chromium } from "playwright"
 import { existsSync, readFileSync } from "fs"
 
@@ -24,7 +24,7 @@ function checkMetaExist() {
 
 async function main() {
   const browser = await chromium.launch({
-    headless: process.platform !== "win32",
+    headless: isTerminal,
   })
   const context = await browser.newContext({
     userAgent:
@@ -66,7 +66,8 @@ async function main() {
   // 选择分区
   await page.click("div.select-box-v2-container")
   await page.click('text="知识"')
-  await page.click('text="野生技术协会"')
+  await page.click("div.drop-cascader-list-wrp > div:nth-child(8)") // 修复问题:找不到二级选项导致堵塞，数字对应二级列表位置
+  //await page.click('text="野生技术协会"')
   
   // 创建标签
   await page.click("input[placeholder*=创建标签]")
@@ -75,7 +76,7 @@ async function main() {
 
   // 视频描述
   await page.click("div.ql-editor[data-placeholder^=填写更全]")
-  await page.keyboard.type(meta["description"].slice(0, 250))
+  await page.keyboard.type(meta["description"].replaceAll("\n\n","\n").slice(0, 250))
 
   //更多选项
   await page.click('text="更多选项"')
