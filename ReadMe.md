@@ -30,6 +30,12 @@ DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
 - playwright 上传B站用
 ## 🧂调味指南 Tinker & Deployment
 <details>
+    <summary>关于下载的清晰度</summary>
+
+youtube-dl会检测PATH中有没有ffmpeg，找不到只能下载720P，不然会尝试下载更高的画质。<sup><a href="https://youtube-dl.readthedocs.io/en/latest/#basic-usage">文档</a></sup>
+</details>
+
+<details>
     <summary>在服务器端跑</summary>
 
 默认是Windows上显示浏览器，其他系统不显示（Headless）。
