@@ -1,11 +1,14 @@
 #!/usr/bin/bash
 
+downloadPath="downloads/"
+
 if [[ $# -eq 0 ]]; then
-    echo -n webpage_url:
-    read yturl
+    read -p "Youtube video URL: " yturl
 else
     yturl=$1
 fi
 
-youtube-dl $yturl -J > meta.json
-youtube-dl $yturl --all-subs -o "downloads/%(id)s.%(ext)s" --exec 'node upload.js'
+vid=`youtube-dl $yturl --get-id`
+youtube-dl $yturl -J > "${downloadPath}$vid.json"
+youtube-dl $yturl --all-subs -o "${downloadPath}%(id)s.%(ext)s" --exec "node upload.js ${downloadPath}$vid.json"
+

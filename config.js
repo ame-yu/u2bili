@@ -1,22 +1,23 @@
 // @ts-check
 
 /**
+ *  默认只有Windows系统浏览器可视化，方便调试和排错
+ *  @type {boolean} */
+export const showBrowser = process.platform === "win32"
+
+/**
+ * 开启会把BV存入Youtube的MetaData JSON文件中。方便后续传字幕
+ * @type {boolean} */
+export const saveBV2Meta = true
+
+/**
+ * youtube-dl下载位置。修改则需和u2bili.sh内的下载地址保持一致
  * @type {string}
  */
-export const metaPath = "./meta.json"
-
+export const downloadPath = "./downloads/"
 /**
- *  default show browser for windows only
- *  @type {boolean} */
-export const isTerminal = process.platform !== "win32"
-
-/** @type {string | null} */
-export const storeData = "./data.json"
-
-
-/**
- * ### 1. Get Cookie
- * Concatenate HTTPOnly cookie `SESSDATA` manually.
+ * 必填项，从环境变量中读取或直接填写下面参数，环境变量优先级高
+ * 具体如何获取请查看ReadMe.md
  * @type {object}
  */
 export const bilibiliCookies = process.env["BILIBILI_COOKIE"]
@@ -26,8 +27,8 @@ export const bilibiliCookies = process.env["BILIBILI_COOKIE"]
     a[b[0]] = b[1]
     return a
   }, {}) ?? {
-  bili_jct: "FROM_YOUR_COOKIE",
-  DedeUserID: "FROM_YOUR_COOKIE",
-  DedeUserID__ckMd5: "FROM_YOUR_COOKIE",
-  SESSDATA: "HTTP_ONLY_COOKIE",
+  bili_jct: "FROM_YOUR_BROWSER_COOKIE",
+  DedeUserID: "FROM_YOUR_BROWSER_COOKIE",
+  DedeUserID__ckMd5: "FROM_YOUR_BROWSER_COOKIE",
+  SESSDATA: "FROM_YOUR_BROWSER_COOKIE",
 }

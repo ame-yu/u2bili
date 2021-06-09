@@ -1,30 +1,38 @@
-import { bilibiliCookies, metaPath, isTerminal } from "./config.js"
+import { bilibiliCookies, showBrowser, saveBV2Meta, downloadPath } from "./config.js"
 import { chromium } from "playwright"
-import { existsSync, readFileSync } from "fs"
-
-checkMetaExist()
+import { existsSync, readFileSync,writeFileSync } from "fs"
+/**
+ * 使用例 node upload.sh MetaFile [VideoFile]
+ * MetaFile 是必须的
+ * 如果视频文件命名和Meta文件一致则可不写
+ */
+var [metaPath, videoPath] = getMetaPathFromArgs()
 const meta = JSON.parse(readFileSync(metaPath))
 
-const homePage = "https://member.bilibili.com/video/upload.html"
-const cookie = Object.keys(bilibiliCookies).map((k) => {
-  return {
-    domain: ".bilibili.com",
-    path: "/",
-    name: k,
-    value: bilibiliCookies[k],
-  }
-})
-
-function checkMetaExist() {
-  if (!existsSync(metaPath)) {
-    console.log("无法找到原信息")
-    process.exit(-1)
-  }
+function parseCookieObject() {
+  return Object.keys(bilibiliCookies).map((k) => {
+    return {
+      domain: ".bilibili.com",
+      path: "/",
+      name: k,
+      value: bilibiliCookies[k],
+    }
+  })
 }
 
+function getMetaPathFromArgs() {
+  if (process.argv.length < 4) {
+    console.error("缺少参数，请传入视频源信息文件")
+    process.exit(-1)
+  }
+
+  return process.argv.slice(2, 4)
+}
+
+const homePage = "https://member.bilibili.com/video/upload.html"
 async function main() {
   const browser = await chromium.launch({
-    headless: isTerminal,
+    headless: !showBrowser,
   })
   const context = await browser.newContext({
     userAgent:
@@ -43,7 +51,7 @@ async function main() {
       ],
     },
   })
-  context.addCookies(cookie)
+  context.addCookies(parseCookieObject())
   const page = await context.newPage()
   try {
     await page.goto(homePage, { timeout: 20 * 1000 })
@@ -57,7 +65,17 @@ async function main() {
     page.waitForEvent("filechooser"),
     page.click("#bili-upload-btn"),
   ])
-  await fileChooser.setFiles(`./downloads/${meta["id"]}.mp4`)
+
+  if(!videoPath){
+    const ext = ["webm", "mp4", "mkv"].find((ext) =>
+      existsSync(`${downloadPath}${meta["id"]}.${ext}`)
+    )
+    if(!ext){
+      console.error(`无法在${downloadPath}找到${meta["id"]}命名的视频文件，上传未成功。`);
+    }
+    videoPath = `${downloadPath}${meta["id"]}.${ext}`
+  }
+  await fileChooser.setFiles(videoPath)
 
   await page.click('text="转载"')
   await page.fill("input[placeholder^=转载视频请注明来源]", meta["webpage_url"])
@@ -68,7 +86,7 @@ async function main() {
   await page.click('text="知识"')
   await page.click("div.drop-cascader-list-wrp > div:nth-child(8)") // 修复问题:找不到二级选项导致堵塞，数字对应二级列表位置
   //await page.click('text="野生技术协会"')
-  
+
   // 创建标签
   await page.click("input[placeholder*=创建标签]")
   await page.keyboard.type(meta["uploader"])
@@ -76,7 +94,9 @@ async function main() {
 
   // 视频描述
   await page.click("div.ql-editor[data-placeholder^=填写更全]")
-  await page.keyboard.type(meta["description"].replaceAll("\n\n","\n").slice(0, 250))
+  await page.keyboard.type(
+    meta["description"].replaceAll("\n\n", "\n").slice(0, 250)
+  )
 
   //更多选项
   await page.click('text="更多选项"')
@@ -87,9 +107,15 @@ async function main() {
   console.log(result)
   let videoUrl = await page.getAttribute(
     "div.content-tag-v2-edit-mod-wrp > p > a",
-    "href"
+    "href",
+    {timeout: 300 * 1000}
   )
   console.log(videoUrl)
+  if(saveBV2Meta){
+    meta["biliUrl"] = videoUrl
+    writeFileSync(metaPath, JSON.stringify(meta,undefined,4))
+  }
+
   await page.close()
   await context.close()
   await browser.close()
