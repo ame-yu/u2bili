@@ -1,6 +1,7 @@
 import { bilibiliCookies, showBrowser, saveBV2Meta, downloadPath } from "./config.js"
 import { chromium } from "playwright"
 import { existsSync, readFileSync,writeFileSync } from "fs"
+import { parseCookieObject } from './utils.js'
 /**
  * 使用例 node upload.sh MetaFile [VideoFile]
  * MetaFile 是必须的
@@ -8,17 +9,6 @@ import { existsSync, readFileSync,writeFileSync } from "fs"
  */
 var [metaPath, videoPath] = getMetaPathFromArgs()
 const meta = JSON.parse(readFileSync(metaPath))
-
-function parseCookieObject() {
-  return Object.keys(bilibiliCookies).map((k) => {
-    return {
-      domain: ".bilibili.com",
-      path: "/",
-      name: k,
-      value: bilibiliCookies[k],
-    }
-  })
-}
 
 function getMetaPathFromArgs() {
   if (process.argv.length < 4) {
@@ -51,7 +41,7 @@ async function main() {
       ],
     },
   })
-  context.addCookies(parseCookieObject())
+  context.addCookies(parseCookieObject(bilibiliCookies))
   const page = await context.newPage()
   try {
     await page.goto(homePage, { timeout: 20 * 1000 })
@@ -108,7 +98,7 @@ async function main() {
   let videoUrl = await page.getAttribute(
     "div.content-tag-v2-edit-mod-wrp > p > a",
     "href",
-    {timeout: 300 * 1000}
+    {timeout: 300_000}
   )
   console.log(videoUrl)
   if(saveBV2Meta){
