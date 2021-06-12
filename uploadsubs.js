@@ -1,99 +1,99 @@
-import { bilibiliCookies, metaPath } from "./config.js"
-import { chromium, webkit, firefox } from "playwright"
+import { bilibiliCookies, downloadPath, showBrowser } from "./config.js"
+import { firefox } from "playwright"
 import { readdirSync, existsSync, readFileSync } from "fs"
+import { parseCookieObject } from "./utils.js"
 
-const meta = JSON.parse(readFileSync(metaPath))
-const homePage = process.argv?.[2]
-
+//常用语言
 const langSelectorMap = {
   en: "div.el-select-dropdown.el-popper > div > ul > li:nth-child(6)",
   ja: "div.el-select-dropdown.el-popper > div > ul > li:nth-child(7)",
 }
 
-const cookie = Object.keys(bilibiliCookies).map((k) => {
-  return {
-    domain: ".bilibili.com",
-    path: "/",
-    name: k,
-    value: bilibiliCookies[k],
-  }
-})
+const metaList = readdirSync(downloadPath)
+  .filter((fileName) => fileName.endsWith(".json"))
+  .map((fileName) => {
+    let path = `${downloadPath}${fileName}`
+    return {
+      path,
+      ...JSON.parse(readFileSync(path)),
+    }
+  })
+  .filter((meta) => meta?.subtitles && meta?.["biliUrl"])
 
-function setBlockAllImage(page) {
-  return page.route("**/*", (route) => {
+console.log(`${metaList.length} video subtitle will be upload.`)
+
+async function blockImageAndTracker(page) {
+  await page.route("**/*", (route) => {
     if (route.request().resourceType() === "image") return route.abort()
-    let isTracker = /(log-reporter.js)/.test(route.request().url())
+    let isTracker = /(log-reporter.js)|(data.bilibili.com\/log)/.test(
+      route.request().url()
+    )
     if (isTracker) return route.abort()
     return route.continue()
   })
 }
 
-async function main(subsPath = "./downloads") {
-  if (!homePage)
-    return console.log(
-      `缺少参数，需要B站视频链接(如https://www.bilibili.com/video/BV1Pf4y1a7RK/)`
-    )
-  if (!existsSync(subsPath))
-    return console.log(`${subsPath}目录不存在，程序退出。`)
+async function main() {
   const browser = await firefox.launch({
-    headless: process.platform !== "win32",
+    headless: !showBrowser,
   })
 
   const context = await browser.newContext({
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.74",
-    storageState: {
-      origins: [
-        {
-          origin: "https://member.bilibili.com",
-          localStorage: [
-            {
-              name: "SHOW_GUIDE",
-              value: "1",
-            },
-          ],
-        },
-      ],
-    },
   })
 
-  context.addCookies(cookie)
+  context.addCookies(parseCookieObject(bilibiliCookies))
+
   const page = await context.newPage()
-  await setBlockAllImage(page)
-  try {
-    await page.goto(homePage, { timeout: 20 * 1000 })
-  } catch (error) {
-    if (error.name === "TimeoutError") {
-      console.log("网络问题导致页面加载超时...")
-    }
-  }
+  await blockImageAndTracker(page)
 
-  const [bvid, cid] = await page.evaluate(() => [window.bvid, window.cid])
-  console.log(`${bvid}\tcid:${cid}`)
+  for await (let meta of metaList) {
+    let subs = meta["subtitles"]
+    console.log(`${meta["title"]} has ${Object.keys(subs).length} sub.`)
+    await page.goto(meta["biliUrl"])
+    const [bvid, cid] = await page.evaluate(() => [window.bvid, window.cid])
+    console.log(`bvid:${bvid}\tcid:${cid}`)
 
-  const subNames = readdirSync(subsPath).filter((file) => file.includes("srt"))
-
-  for await (let subName of subNames) {
-    await page.goto(
-      `https://account.bilibili.com/subtitle/edit/#/editor?bvid=${bvid}&cid=${cid}`,
-      // `https://member.bilibili.com/platform/zimu/my-zimu/zimu-editor?bvid=${bvid}&cid=${cid}`,
-      {
-        waitUntil: "networkidle",
-      }
-    )
-    const lang = /.*\.(.{2,5})\.srt/.exec(subName)?.[1]
-    const langSelector = langSelectorMap[lang] || langSelectorMap.en
-    console.log(`Ready to upload ${lang} sub.`)
-    await page.click(langSelector)
-    const [fileChooser] = await Promise.all([
-      page.waitForEvent("filechooser"),
-      // page.click('#app > div > div > div.clearfix > div.editor-video > div.file-tool.clearfix > label > div')
-      page.click('text="上传字幕"'),
+    await Promise.all([
+      page.goto(
+        `https://account.bilibili.com/subtitle/edit/#/editor?bvid=${bvid}&cid=${cid}`,
+        {
+          waitUntil: "networkidle",
+        }
+      ),
+      page.waitForResponse(/subtitle_lan.json/),
     ])
-    await fileChooser.setFiles(`./downloads/${meta["id"]}.${lang}.srt`)
-    await page.click('text="提交"')
-    console.log(`提交${lang}字幕`)
-    await page.waitForTimeout(1 * 1000)
+
+    //上传字幕阶段
+    for await (let lang of Object.keys(subs)) {
+      let subPath = `${downloadPath}${meta["id"]}.${lang}.srt`
+      if (!existsSync(subPath)) {
+        console.log(`${subPath} is not exist. skip`)
+        continue
+      }
+      let langSelector = langSelectorMap[lang]
+      if (!langSelector) {
+        console.log(`unknown language. skip`)
+        continue
+      }
+
+      if (
+        (await (await page.$(langSelector)).textContent()).includes("已发布")
+      ) {
+        console.log("Oops, Seems to be this sub already submitted.")
+        continue
+      }
+
+      await page.click(langSelector)
+      const [fileChooser] = await Promise.all([
+        page.waitForEvent("filechooser"),
+        page.click('text="上传字幕"'),
+      ])
+      await fileChooser.setFiles(subPath)
+      await page.click('text="提交"')
+      console.log(`Submit ${lang} sub complete`)
+    }
   }
 
   await page.close()
