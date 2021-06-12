@@ -1,5 +1,7 @@
 # youtube->bilibili 搬运脚本
-
+![STARS](https://img.shields.io/github/stars/ame-yu/u2bili?color=%231cd&style=for-the-badge)
+![LICENSE](https://img.shields.io/github/license/ame-yu/u2bili?style=for-the-badge)
+![LAST_COMMIT](https://img.shields.io/github/last-commit/ame-yu/u2bili?style=for-the-badge)
 <details>
     <summary>Demo preview</summary>
 
