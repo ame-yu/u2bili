@@ -1,0 +1,63 @@
+name: Daily update
+on:
+  schedule:
+    - cron: "0 4 * * *" # GMT+8 12:00
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      include:
+        description: "--include: workflow file filter, you can use glob format to filter your workflows, the default value is empty value, means no filter will be using"
+        required: false
+        default: ""
+      force:
+        description: "--force: whether force to run workflow, true or false"
+        required: false
+        default: "false"
+      verbose:
+        description: "--verbose: debug workflow, true or false"
+        required: false
+        default: "false"
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    name: Run
+    timeout-minutes: 30
+    steps:
+      - name: Check is running
+        uses: actions/github-script@v4
+        id: runningCount
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const running = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "actionsflow.yml",
+              status:"in_progress"
+            });
+            return running.data.total_count
+          result-encoding: string
+      - uses: actions/checkout@v2
+        if: steps.runningCount.outputs.result=='1'
+      - name: Run Actionsflow
+        if: steps.runningCount.outputs.result=='1'
+        uses: actionsflow/actionsflow-action@v1
+        with:
+          args: "build --include ${{ github.event.inputs.include || ''}} -f ${{github.event.inputs.force=='true' && 'true' || 'false'}} --verbose ${{github.event.inputs.verbose=='true' && 'true' || 'false'}}"
+          json-secrets: ${{ toJSON(secrets) }}
+          json-github: ${{ toJSON(github) }}
+      - name: Setup act
+        if: steps.runningCount.outputs.result=='1'
+        run: |
+          wget -q https://github.com/nektos/act/releases/download/v0.2.23/act_Linux_x86_64.tar.gz
+          tar -xf act_Linux_x86_64.tar.gz act
+          sudo mv ./act /usr/local/bin/act && sudo chmod a+x /usr/local/bin/act
+      - name: Run act
+        if: steps.runningCount.outputs.result=='1'
+        run: act -b --workflows ./dist/workflows --secret-file ./dist/.secrets --eventpath ./dist/event.json --env-file ./dist/.env -P ubuntu-20.04=catthehacker/ubuntu:act-20.04 -P ubuntu-latest=catthehacker/ubuntu:act-20.04
+      - name: Save to JSON
+        uses: actions/cache@v2
+        with:
+          path: |
+            downloads/**.json
+          key: u2bili-${{ runner.os }}

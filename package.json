@@ -1,0 +1,13 @@
+{
+  "name": "u2bili",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ame-yu/u2bili.git"
+  },
+  "type": "module",
+  "dependencies": {
+    "playwright": "^1.12.0"
+  }
+}

@@ -1,0 +1,17 @@
+name: Reset subscribe cache
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'workflows/youtube.yml'
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    name: Reset Actionsflow Cache
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Actionsflow Clean
+        uses: actionsflow/actionsflow-action@v1
+        with:
+          args: clean
+          json-secrets: ${{ toJSON(secrets) }}
