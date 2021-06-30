@@ -54,10 +54,4 @@ jobs:
           sudo mv ./act /usr/local/bin/act && sudo chmod a+x /usr/local/bin/act
       - name: Run act
         if: steps.runningCount.outputs.result=='1'
-        run: act -b --workflows ./dist/workflows --secret-file ./dist/.secrets --eventpath ./dist/event.json --env-file ./dist/.env -P ubuntu-20.04=catthehacker/ubuntu:act-20.04 -P ubuntu-latest=catthehacker/ubuntu:act-20.04
-      - name: Save to JSON
-        uses: actions/cache@v2
-        with:
-          path: |
-            downloads/**.json
-          key: u2bili-${{ runner.os }}
+        run: act --workflows ./dist/workflows --secret-file ./dist/.secrets --eventpath ./dist/event.json --env-file ./dist/.env -P ubuntu-20.04=catthehacker/ubuntu:act-20.04 -P ubuntu-latest=catthehacker/ubuntu:act-20.04

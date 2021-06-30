@@ -1,10 +1,10 @@
 import {
   bilibiliCookies,
   showBrowser,
-  saveBV2Meta,
+  bvFieldName,
   downloadPath,
 } from "./config.js"
-import { firefox as browserCore  } from "playwright"
+import { firefox as browserCore } from "playwright"
 import { existsSync, readFileSync, writeFileSync } from "fs"
 import { parseCookieObject } from "./utils.js"
 /**
@@ -114,8 +114,8 @@ async function main() {
   )
   await page.waitForLoadState("networkidle")
   console.log(videoUrl)
-  if (saveBV2Meta) {
-    meta["biliUrl"] = videoUrl
+  if (bvFieldName) {
+    meta[bvFieldName] = videoUrl
     writeFileSync(metaPath, JSON.stringify(meta, undefined, 4))
   }
 
