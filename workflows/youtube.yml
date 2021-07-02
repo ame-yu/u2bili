@@ -1,11 +1,11 @@
 on:
   youtube:
     channel_id:
-    - UCwXdFgeE9KYzlDdR7TG9cMw #Flutter
-    - UCsBjURrPoezykLs9EqgamOA #Fireship
-    - UCP7uiEZIqci43m22KDl0sNw #Kotlin by JetBrains
+      - UCwXdFgeE9KYzlDdR7TG9cMw #Flutter
+      - UCsBjURrPoezykLs9EqgamOA #Fireship
+      - UCP7uiEZIqci43m22KDl0sNw #Kotlin by JetBrains
     playlist_id:
-    - PL0lo9MOBetEFCNnxB1uZcDGcrPO1Jbpz8 #GitHub Changelog
+      - PL0lo9MOBetEFCNnxB1uZcDGcrPO1Jbpz8 #GitHub Changelog
     config:
       filterScript: |
         return new Date() - 24 * 3600 * 1000 < new Date(item.pubDate) //Recent 24 hours Only
@@ -17,17 +17,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup headless environment
         run: |
-          rm /opt/hostedtoolcache/node/12.22.1/x64/bin/node # Delete node12 from act docker build
+          which node
+          node -v
           curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - > apt.log # Add apt sources list and apt update 
           apt-get install -qqy wget ffmpeg python nodejs >> apt.log
-          node -v
           npm i --silent
           # Install Chromium dependency
           apt-get install -qq 'fonts-liberation' 'libasound2' 'libatk-bridge2.0-0' 'libatk1.0-0' 'libatspi2.0-0' 'libcairo2' 'libcups2' 'libdbus-1-3' 'libdrm2' 'libgbm1' 'libgdk-pixbuf2.0-0' 'libglib2.0-0' 'libgtk-3-0' 'libnspr4' 'libnss3' 'libpango-1.0-0' 'libpangocairo-1.0-0' 'libx11-6' 'libx11-xcb1' 'libxcb-dri3-0' 'libxcb1' 'libxcomposite1' 'libxdamage1' 'libxext6' 'libxfixes3' 'libxi6' 'libxrandr2' 'libxtst6' >> apt.log
           # Install FireFox dependency
           apt-get install -qq 'libatk1.0-0' 'libcairo-gobject2' 'libcairo2' 'libdbus-1-3' 'libdbus-glib-1-2' 'libfontconfig1' 'libfreetype6' 'libglib2.0-0' 'libgtk-3-0' 'libgtk2.0-0' 'libharfbuzz0b' 'libpango-1.0-0' 'libpangocairo-1.0-0' 'libpangoft2-1.0-0' 'libx11-6' 'libx11-xcb1' 'libxcb-shm0' 'libxcb1' 'libxcomposite1' 'libxcursor1' 'libxdamage1' 'libxext6' 'libxfixes3' 'libxi6' 'libxrender1' 'libxt6' >> apt.log
           # Install latest youtube-dl
-          wget -q https://yt-dl.org/latest/youtube-dl -O /usr/local/bin/youtube-dl && chmod a+x /usr/local/bin/youtube-dl 
+          wget -q https://yt-dl.org/latest/youtube-dl -O /usr/local/bin/youtube-dl && chmod a+x /usr/local/bin/youtube-dl
       - name: u2bili
         env:
           link: ${{on.youtube.outputs.link}}
