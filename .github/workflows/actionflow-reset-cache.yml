@@ -1,4 +1,6 @@
 name: Reset subscribe cache
+concurrency: 
+  group: actionsflow
 on:
   workflow_dispatch:
   push:

@@ -1,0 +1,3 @@
+## 20210806
+1. 固定act运行的镜像，原catthehacker/ubuntu:act-20.04镜像node被升成了v14.17.4，和playwright存在兼容问题。导致元素找不到。现使用catthehacker/ubuntu:act-20.04-20210721
+2. 不再使用原ActionsFlow的方法检查同时运行中的工作流，详情Issue：https://github.com/actionsflow/actionsflow/issues/28
