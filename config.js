@@ -6,11 +6,6 @@
 export const showBrowser = process.platform === "win32"
 
 /**
- * BiliBili播放地址存入MetaJSON文件的字段值, 方便后跟踪、续传字幕, 空字符""则禁用
- * @type {string} */
-export const bvFieldName = "bv_url"
-
-/**
  * youtube-dl下载位置。修改则需和u2bili.sh内的下载地址保持一致
  * @type {string}
  */

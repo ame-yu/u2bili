@@ -1,7 +1,6 @@
 import {
   bilibiliCookies,
   showBrowser,
-  bvFieldName,
   downloadPath,
 } from "./config.js"
 import { firefox as browserCore } from "playwright"
@@ -105,7 +104,9 @@ async function main() {
   await page.click('text="允许观众投稿字幕"')
 
   await page.click('text="立即投稿"')
-  let result = await page.textContent("h3.upload-3-v2-success-hint-1")
+  let result = await page.textContent("h3.upload-3-v2-success-hint-1",{
+    timeout: 60_000
+  })
   console.log(result)
   let videoUrl = await page.getAttribute(
     "div.content-tag-v2-edit-mod-wrp > p > a",
@@ -114,10 +115,6 @@ async function main() {
   )
   await page.waitForLoadState("networkidle")
   console.log(videoUrl)
-  if (bvFieldName) {
-    meta[bvFieldName] = videoUrl
-    writeFileSync(metaPath, JSON.stringify(meta, undefined, 4))
-  }
 
   await page.close()
   await context.close()

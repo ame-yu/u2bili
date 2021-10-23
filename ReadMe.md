@@ -3,7 +3,7 @@
 ![LICENSE](https://img.shields.io/github/license/ame-yu/u2bili?style=for-the-badge)
 ![LAST_COMMIT](https://img.shields.io/github/last-commit/ame-yu/u2bili?style=for-the-badge)
 <details>
-    <summary>Demo preview</summary>
+    <summary>Demo预览</summary>
 
 ![Preview](docs/preview.gif)
 </details>
@@ -28,6 +28,12 @@ DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
 ```
 </details>
 
+<details>
+    <summary>✨字幕上传脚本预览</summary>
+    
+![Cookie](docs/preview_uploadsubs.gif)
+</details>
+
 ## 🍱食材 Frameworks
 - youtube-dl 下载油管用
 - playwright 上传B站用
@@ -41,7 +47,12 @@ youtube-dl会检测PATH中是否有ffmpeg，有FFmpeg的情况下会优先下载
 <details>
     <summary>🍥使用Github Action</summary>
 
-必须设置Secret `BILIBILI_COOKIE`
+<h2 style="text-align: center;"><b>❗重要提示</b></h2>
+<h3 style="text-align: center;"><b>不要fork，请clone后push到自己的私有仓库，使用额度内Actions时间！</b><h3>
+<h3 style="text-align: center;"><b>占用公共仓库Action时间<sup>💢</sup>跑开发无关脚本会违反Github用户协议。</b><h3>
+<br>
+
+Actions面板设置Secret `BILIBILI_COOKIE` （必要步骤）
 ```
 DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
 ```
