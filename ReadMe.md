@@ -8,13 +8,12 @@
 ![Preview](docs/preview.gif)
 </details>
 
-## 🍔食用方式 Install & Usage
-1. 安装Python
-2. 安装Node
-3. 安装依赖`npm install playwright && pip install youtube-dl`
-4. 设置bilibili cookies（编辑config.js或设置`BILIBILI_COOKIE`环境变量）
-5. u2bili.sh \<url\>
-
+## 🍔使用
+> node+python环境
+1. 安装node依赖`yarn`或者`npm install`
+2. 安装yt-dlp [文档](https://github.com/yt-dlp/yt-dlp#installation)
+3. 提供cookies：编辑config.js或设置`BILIBILI_COOKIE`环境变量
+4. bash u2bili.sh \<url\>
 
 <details>
     <summary>关于获取Cookie</summary>
@@ -34,22 +33,20 @@ DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
 ![Cookie](docs/preview_uploadsubs.gif)
 </details>
 
-## 🍱食材 Frameworks
-- youtube-dl 下载油管用
-- playwright 上传B站用
-## 🧂调味指南 Tinker & Deployment
+## 🍱使用框架 Frameworks
+- yt-dlp
+- playwright 
+## 🧂Q&A
 <details>
     <summary>📺关于下载的清晰度</summary>
 
-youtube-dl会检测PATH中是否有ffmpeg，有FFmpeg的情况下会优先下载更高清晰度<sup><a href="https://youtube-dl.readthedocs.io/en/latest/#basic-usage">文档</a></sup>
+yt-dlp文档 [github.com/yt-dlp/yt-dlp#format-selection](https://github.com/yt-dlp/yt-dlp#format-selection)
 </details>
 
 <details>
     <summary>🍥使用Github Action</summary>
 
-<h2 style="text-align: center;"><b>❗重要提示</b></h2>
-<h3 style="text-align: center;"><b>不要fork，请clone后push到自己的私有仓库，使用额度内Actions时间！</b><h3>
-<h3 style="text-align: center;"><b>占用公共仓库Action时间<sup>💢</sup>跑开发无关脚本会违反Github用户协议。</b><h3>
+<h2 ><b>❗重要提示：请clone后push到自己的私有仓库，使用<a href="https://github.com/settings/billing">额度内action时间！<a></b></h2>
 <br>
 
 Actions面板设置Secret `BILIBILI_COOKIE` （必要步骤）

@@ -55,7 +55,7 @@ async function main() {
     ])
   } catch (error) {
     if (error.name === "TimeoutError") {
-      console.log("网络问题导致页面加载超时...")
+      console.log("超时! 当前页面:" + page.url())
     }
   }
 
