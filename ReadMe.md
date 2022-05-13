@@ -9,8 +9,9 @@
 </details>
 
 ## 🍔使用
-> node+python环境
-1. 安装node依赖`yarn`或者`npm install`
+> 预置环境 node+python+[jq](https://github.com/stedolan/jq)
+> 
+1. `yarn`或者`npm install`安装node依赖
 2. 安装yt-dlp [文档](https://github.com/yt-dlp/yt-dlp#installation)
 3. 提供cookies：编辑config.js或设置`BILIBILI_COOKIE`环境变量
 4. bash u2bili.sh \<url\>
@@ -35,11 +36,14 @@ DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
 
 ## 🍱使用框架 Frameworks
 - yt-dlp
-- playwright 
+- playwright
+- actionsflow
+
 ## 🧂Q&A
 <details>
     <summary>📺关于下载的清晰度</summary>
 
+如有装有ffmpeg则会自动选择高画质视频和高画质音频然后合并。
 yt-dlp文档 [github.com/yt-dlp/yt-dlp#format-selection](https://github.com/yt-dlp/yt-dlp#format-selection)
 </details>
 

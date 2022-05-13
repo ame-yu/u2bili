@@ -15,15 +15,9 @@ export const downloadPath = "./downloads/"
  * 具体如何获取请查看ReadMe.md
  * @type {object}
  */
-export const bilibiliCookies = process.env["BILIBILI_COOKIE"]
-  ?.split("; ")
-  ?.map((i) => i.split("="))
-  ?.reduce((a, b) => {
-    a[b[0]] = b[1]
-    return a
-  }, {"FROM_ENV": "true"}) ?? {
-  bili_jct: "FROM_YOUR_BROWSER_COOKIE",
-  DedeUserID: "FROM_YOUR_BROWSER_COOKIE",
-  DedeUserID__ckMd5: "FROM_YOUR_BROWSER_COOKIE",
-  SESSDATA: "FROM_YOUR_BROWSER_COOKIE",
+export const bilibiliCookies = {
+  DedeUserID: "XXXXXXXXXXXXX",
+  DedeUserID__ckMd5: "XXXXXXXXXXXXX",
+  bili_jct: "XXXXXXXXXXXXX",
+  SESSDATA: "XXXXXXXXXXXXX"
 }

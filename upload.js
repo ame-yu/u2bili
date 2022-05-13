@@ -4,27 +4,48 @@ import {
   downloadPath,
 } from "./config.js"
 import { firefox as browserCore } from "playwright"
-import { existsSync, readFileSync, writeFileSync } from "fs"
-import { parseCookieObject } from "./utils.js"
+import { existsSync, readFileSync } from "fs"
 /**
  * 使用例 node upload.sh MetaFile [VideoFile]
  * MetaFile 是必须的
  * 如果视频文件命名和Meta文件一致则可不写
  */
-if (bilibiliCookies["FROM_ENV"]) console.log("从环境变量读取Cookie")
-var [metaPath, videoPath] = getMetaPathFromArgs()
-const meta = JSON.parse(readFileSync(metaPath))
+const uploadPageUrl = "https://member.bilibili.com/video/upload.html"
 
-function getMetaPathFromArgs() {
-  if (process.argv.length < 4) {
-    console.error("缺少参数，请传入视频源信息文件")
-    process.exit(-1)
-  }
-
-  return process.argv.slice(2, 4)
+if (process.argv.length < 3) {
+  console.error("至少传入视频信息JSON路径 node upload.js json_file [video_file]")
+  process.exit(-1)
 }
 
-const homePage = "https://member.bilibili.com/video/upload.html"
+var [metaPath, videoPath] = process.argv.slice(2, 4)
+const meta = JSON.parse(readFileSync(metaPath))
+
+function getCookies(){
+  const envCookies = process.env["BILIBILI_COOKIE"]
+  if(envCookies){
+    console.log("从环境变量读取Cookie");
+    return envCookies.split(";").map(i => {
+      const [key, value] = i.split("=")
+      return {
+        domain: ".bilibili.com",
+        path: "/",
+        name: key,
+        value: value,
+      }
+    })
+  }else{
+    console.log("从配置文件读取Cookie");
+    return Object.keys(bilibiliCookies).map((k) => {
+      return {
+        domain: ".bilibili.com",
+        path: "/",
+        name: k,
+        value: bilibiliCookies[k],
+      }
+    })
+  }
+}
+
 async function main() {
   const browser = await browserCore.launch({
     headless: !showBrowser,
@@ -46,11 +67,11 @@ async function main() {
       ],
     },
   })
-  context.addCookies(parseCookieObject(bilibiliCookies))
+  context.addCookies(getCookies())
   const page = await context.newPage()
   try {
     await Promise.all([
-      page.goto(homePage, { waitUntil: "networkidle", timeout: 20 * 1000 }),
+      page.goto(uploadPageUrl, { waitUntil: "networkidle", timeout: 20 * 1000 }),
       page.waitForResponse(/\/OK/), //Fix：库未加载完的无效点击
     ])
   } catch (error) {
@@ -77,6 +98,7 @@ async function main() {
     videoPath = `${downloadPath}${meta["id"]}.${ext}`
   }
   await fileChooser.setFiles(videoPath)
+  console.log(`开始上传${videoPath}`);
 
   await page.click('text="转载"')
   await page.fill("input[placeholder^=转载视频请注明来源]", meta["webpage_url"])
@@ -103,19 +125,19 @@ async function main() {
   await page.click('text="更多选项"')
   await page.click('text="允许观众投稿字幕"')
 
+  await page.waitForSelector('text="上传完成"',{
+    timeout: 5 * 60_000 //等待上传5分钟
+  }).catch(() => {
+    console.log("上传时间过长")
+  })
+
   await page.click('text="立即投稿"')
   let result = await page.textContent("h3.upload-3-v2-success-hint-1",{
     timeout: 60_000
   })
   console.log(result)
-  let videoUrl = await page.getAttribute(
-    "div.content-tag-v2-edit-mod-wrp > p > a",
-    "href",
-    { timeout: 300_000 }
-  )
-  await page.waitForLoadState("networkidle")
-  console.log(videoUrl)
 
+  await page.waitForTimeout(3_000)
   await page.close()
   await context.close()
   await browser.close()
