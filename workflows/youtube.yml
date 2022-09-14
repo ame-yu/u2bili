@@ -19,7 +19,10 @@ jobs:
         run: |
           which node
           node -v
-          curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - > apt.log # Add apt sources list and apt update 
+          echo "insecure" > $HOME/.curlrc # Insecure (-k) for all curls
+          echo "Acquire::https::Verify-Peer false;" >> /etc/apt/apt.conf.d/80ssl-exceptions # Disable apk CA check
+          echo "Acquire::https::Verify-Host false;" >> /etc/apt/apt.conf.d/80ssl-exceptions # Disable apk CA check
+          curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - #> apt.log # Add apt sources list and apt update 
           apt-get install -qqy wget ffmpeg python nodejs >> apt.log
           npm i --silent
           # Install Chromium dependency
@@ -30,8 +33,16 @@ jobs:
           curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
           chmod a+rx /usr/local/bin/yt-dlp
       - name: u2bili
+        timeout-minutes: 50
         env:
           link: ${{on.youtube.outputs.link}}
           BILIBILI_COOKIE: ${{ secrets.BILIBILI_COOKIE }}
         run: |
           chmod +x ./u2bili.sh && ./u2bili.sh "${link}"
+      # - name: upload Fail video if failure
+      #   uses: actions/upload-artifact@v3
+      #   if: failure()
+      #   with:
+      #     name: video record
+      #     path: |
+      #       videos/

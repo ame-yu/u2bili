@@ -14,7 +14,7 @@
 1. `yarn`或者`npm install`安装node依赖
 2. 安装yt-dlp [文档](https://github.com/yt-dlp/yt-dlp#installation)
 3. 提供cookies：编辑config.js或设置`BILIBILI_COOKIE`环境变量
-4. bash u2bili.sh \<url\>
+4. ./u2bili.sh \<url\>
 
 <details>
     <summary>关于获取Cookie</summary>
@@ -24,8 +24,9 @@
 填写[config.js](config.js)最后4个参数或设置`BILIBILI_COOKIE`环境变量
 ```
 BILIBILI_COOKIE环境变量格式如下：
-DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
+DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
+👆 大概一个月更新一次bili_jct和SESSDATA
 </details>
 
 <details>
@@ -55,8 +56,9 @@ yt-dlp文档 [github.com/yt-dlp/yt-dlp#format-selection](https://github.com/yt-d
 
 Actions面板设置Secret `BILIBILI_COOKIE` （必要步骤）
 ```
-DedeUserID=XXX; DedeUserID__ckMd5=XXX; bili_jct=XXX; SESSDATA=XXX
+DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
+
 几个重要参数
 - 扫描周期`schedule.cron` [.github/workflows/actionsflow.yml](.github/workflows/actionsflow.yml)
 - 订阅频道`channel_id` [workflows/youtube.yml](workflows/youtube.yml)

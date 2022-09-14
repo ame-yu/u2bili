@@ -1,6 +1,6 @@
 {
   "name": "u2bili",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -9,6 +9,6 @@
   "homepage": "https://github.com/ame-yu/u2bili",
   "type": "module",
   "dependencies": {
-    "playwright": "^1.21.0"
+    "playwright": "1.25.2"
   }
 }

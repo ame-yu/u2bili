@@ -19,5 +19,5 @@ export const bilibiliCookies = {
   DedeUserID: "XXXXXXXXXXXXX",
   DedeUserID__ckMd5: "XXXXXXXXXXXXX",
   bili_jct: "XXXXXXXXXXXXX",
-  SESSDATA: "XXXXXXXXXXXXX"
+  SESSDATA: "XXXXXXXXXXXXX",
 }
