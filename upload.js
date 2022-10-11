@@ -1,6 +1,6 @@
 import { bilibiliCookies, showBrowser, downloadPath } from "./config.js"
 import { firefox as browserCore } from "playwright"
-import { existsSync, readFileSync } from "fs"
+import { existsSync, readFileSync, writeFileSync } from "fs"
 /**
  * 使用例 node upload.sh MetaFile [VideoFile]
  * MetaFile 是必须的
@@ -130,6 +130,8 @@ async function main() {
 
   await page.fill("input[placeholder*=标题]", meta["title"])
 
+  await uploadSubtitles(page, meta)
+
   await page
     .waitForSelector('text="更改封面"', {
       timeout: 3 * 60_000, // 等待自动生成封面
@@ -146,14 +148,81 @@ async function main() {
       console.log("上传时间过长")
     })
 
-  page.waitForResponse(/\/OK/)
-
   await page.click('text="立即投稿"')
 
-  await page.waitForTimeout(3_000)
+  await page.waitForTimeout(3000)
   await page.close()
   await context.close()
   await browser.close()
+}
+
+async function vtt2srt(path) {
+  if (!existsSync(path)) return
+
+  let num = 1
+  const vtt = readFileSync(path, "utf-8")
+  // 去除头部meta信息，改为逗号分割，增加序号，空行修整
+  let srt = vtt
+    .split("\n")
+    .slice(4)
+    .join("\n")
+    .replace(
+      /(\d{2}:\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}:\d{2}.\d{3})/g,
+      (match, p1) => {
+        return `${num++}\n${p1.replaceAll(".", ",")}`
+      }
+    )
+    .replace(/\n+$/g, "")
+
+  writeFileSync(path, srt)
+}
+
+async function uploadSubtitles(page, meta) {
+  // 寻找中文字幕和英文字幕
+  const langCodes = Object.keys(meta["subtitles"])
+  const enSub = langCodes.find((code) => code.startsWith("en"))
+  const zhSub = langCodes.find((code) => code.startsWith("zh-Hans"))
+
+  if (!enSub && !zhSub) return
+
+  await page.click('text="更多设置"')
+
+  await page.click('text="上传字幕"')
+
+  async function selectSub(lang, path) {
+    if (!existsSync(path)) return
+
+    await page.click(`[placeholder="选择字幕语言"]`)
+    await page.click(`li:has-text("${lang}")`)
+
+    const [chooser] = await Promise.all([
+      page.waitForEvent("filechooser", { timeout: 10_000 }),
+      page.click(".modal-content-upload button"),
+    ])
+
+    await chooser.setFiles(path)
+  }
+
+  if (zhSub) {
+    const subPath = `${downloadPath}${meta["id"]}.${zhSub}.vtt`
+    vtt2srt(subPath)
+    await selectSub("中文", subPath)
+    console.log("已添加中文字幕")
+  }
+
+  if (enSub) {
+    const subPath = `${downloadPath}${meta["id"]}.${enSub}.vtt`
+    vtt2srt(subPath)
+    await selectSub("英语", subPath)
+    console.log("已添加英文字幕")
+  }
+
+  await page.click('text="确认"')
+
+  // 即使格式错误也继续上传
+  await page
+    .click('text="取消"', { timeout: 1000, delay: 1000 })
+    .catch(() => {})
 }
 
 main()

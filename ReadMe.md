@@ -9,7 +9,7 @@
 </details>
 
 ## 🍔使用
-> 预置环境 node+python+[jq](https://github.com/stedolan/jq)
+> 预置环境 node16.x+python3+[jq](https://github.com/stedolan/jq)
 > 
 1. `yarn`或者`npm install`安装node依赖
 2. 安装yt-dlp [文档](https://github.com/yt-dlp/yt-dlp#installation)
@@ -27,12 +27,6 @@ BILIBILI_COOKIE环境变量格式如下：
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
 👆 大概一个月更新一次bili_jct和SESSDATA
-</details>
-
-<details>
-    <summary>✨字幕上传脚本预览</summary>
-    
-![Cookie](docs/preview_uploadsubs.gif)
 </details>
 
 ## 🍱使用框架 Frameworks
@@ -58,6 +52,7 @@ Actions面板设置Secret `BILIBILI_COOKIE` （必要步骤）
 ```
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
+👆 如果同时使用该账号登录网页端，容易刷新token，建议非日常用号
 
 几个重要参数
 - 扫描周期`schedule.cron` [.github/workflows/actionsflow.yml](.github/workflows/actionsflow.yml)
