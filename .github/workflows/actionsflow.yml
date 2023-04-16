@@ -1,6 +1,9 @@
 name: Daily update
 concurrency: 
   group: actionsflow
+permissions:
+  actions: read
+  contents: read
 on:
   schedule:
     - cron: "0 4 * * *" # GMT+8 12:00

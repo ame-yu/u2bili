@@ -4,6 +4,7 @@ on:
       - UCwXdFgeE9KYzlDdR7TG9cMw #Flutter
       - UCsBjURrPoezykLs9EqgamOA #Fireship
       - UCP7uiEZIqci43m22KDl0sNw #Kotlin by JetBrains
+      # 找不到UC开头的ID? channel主页 ctrl+u ctrl+f 搜channel_id=
     playlist_id:
       - PL0lo9MOBetEFCNnxB1uZcDGcrPO1Jbpz8 #GitHub Changelog
     config:

@@ -26,7 +26,7 @@
 BILIBILI_COOKIE环境变量格式如下：
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
-👆 大概一个月更新一次bili_jct和SESSDATA
+👆 大概三个月更新一次bili_jct和SESSDATA
 </details>
 
 ## 🍱使用框架 Frameworks
@@ -52,7 +52,7 @@ Actions面板设置Secret `BILIBILI_COOKIE` （必要步骤）
 ```
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
-👆 如果同时使用该账号登录网页端，容易刷新token，建议非日常用号
+👆 Cookie有效期大概3个月（多设备异地登录会提前过期，所以建议使用小号，获取Cookie后本地浏览器删除Cookie不再登录）
 
 几个重要参数
 - 扫描周期`schedule.cron` [.github/workflows/actionsflow.yml](.github/workflows/actionsflow.yml)

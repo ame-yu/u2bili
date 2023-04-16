@@ -1,11 +1,12 @@
 name: Clean workflow runs
 on:
   workflow_dispatch:
-
+permissions:
+  actions: write
 jobs:
   run:
     runs-on: ubuntu-latest
-    name: Clean
+    name: Clean latest 100 actions log
     steps:
       - uses: actions/github-script@v4
         with:

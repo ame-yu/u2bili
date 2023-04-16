@@ -61,6 +61,10 @@ async function main() {
               name: "SHOW_GUIDE",
               value: "1",
             },
+            {
+              name: "bili_videoup_submit_auto_tips",
+              value: "1"
+            }
           ],
         },
       ],

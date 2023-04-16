@@ -1,6 +1,9 @@
 name: Reset subscribe cache
 concurrency: 
   group: actionsflow
+permissions:
+  actions: write
+  contents: write
 on:
   workflow_dispatch:
   push:
