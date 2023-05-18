@@ -13,7 +13,7 @@
 > 
 1. `yarn`或者`npm install`安装node依赖
 2. 安装yt-dlp [文档](https://github.com/yt-dlp/yt-dlp#installation)
-3. 提供cookies：编辑config.js或设置`BILIBILI_COOKIE`环境变量
+3. 提供cookies：通过 .env 提供或设置`BILIBILI_COOKIE`环境变量
 4. ./u2bili.sh \<url\>
 
 <details>
@@ -21,7 +21,20 @@
     
 登录后F12,Application(应用程序)面板，选择cookie进行查看。
 ![Cookie](docs/cookie.jpg)
-填写[config.js](config.js)最后4个参数或设置`BILIBILI_COOKIE`环境变量
+以下方法选择一个即可：
+
+- 创建文件 .env，内容格式如下，填入你的变量值即可
+
+```shell
+DedeUserID: "xxxxxx"
+DedeUserID__ckMd5: "xxxxxx"
+bili_jct: "xxxxxx"
+SESSDATA: "xxxxxx"
+```
+
+注意：虽然 .gitignore 里已经写上了 .env，但还是要提醒一下**一定不要**将 .env 文件 push 到远端，否则有账号被盗的危险。
+
+- 设置`BILIBILI_COOKIE`环境变量
 ```
 BILIBILI_COOKIE环境变量格式如下：
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
