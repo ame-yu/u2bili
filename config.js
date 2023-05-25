@@ -1,4 +1,5 @@
 // @ts-check
+import 'dotenv/config'
 
 /**
  *  默认只有Windows系统浏览器可视化, 方便调试和排错
@@ -16,8 +17,8 @@ export const downloadPath = "./downloads/"
  * @type {object}
  */
 export const bilibiliCookies = {
-  DedeUserID: "XXXXXXXXXXXXX",
-  DedeUserID__ckMd5: "XXXXXXXXXXXXX",
-  bili_jct: "XXXXXXXXXXXXX",
-  SESSDATA: "XXXXXXXXXXXXX",
+  DedeUserID: process.env.DedeUserID,
+  DedeUserID__ckMd5: process.env.DedeUserID__ckMd5,
+  bili_jct: process.env.bili_jct,
+  SESSDATA: process.env.SESSDATA,
 }

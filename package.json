@@ -9,6 +9,7 @@
   "homepage": "https://github.com/ame-yu/u2bili",
   "type": "module",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "playwright": "1.25.2"
   }
 }

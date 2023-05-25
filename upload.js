@@ -32,7 +32,7 @@ function getCookies() {
       }
     })
   } else {
-    console.log("从配置文件读取Cookie")
+    console.log("从.env读取Cookie")
     return Object.keys(bilibiliCookies).map((k) => {
       return {
         domain: ".bilibili.com",
