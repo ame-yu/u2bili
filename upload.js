@@ -136,13 +136,24 @@ async function main() {
 
   await uploadSubtitles(page, meta)
 
-  await page
+  // 上传封面
+  try {
+    const [chooser] = await Promise.all([
+      page.waitForEvent("filechooser", { timeout: 10_000 }),
+      page.click(".cover-upload"),
+    ])
+    await chooser.setFiles(`${downloadPath}${meta["id"]}.webp`)
+    await page.click('text="完成"')
+  } catch (error) {
+    console.error('上传封面失败，使用自动生成的封面', error.message)
+    await page
     .waitForSelector('text="更改封面"', {
       timeout: 3 * 60_000, // 等待自动生成封面
     })
     .catch(() => {
-      console.log("等待封面时间过长")
+      console.log("等待封面自动生成时间过长")
     })
+  }
 
   await page
     .waitForSelector('text="上传完成"', {
