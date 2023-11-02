@@ -26,7 +26,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     name: Run
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v2
       - name: Run Actionsflow
@@ -41,4 +41,4 @@ jobs:
           tar -xf act_Linux_x86_64.tar.gz act
           sudo mv ./act /usr/local/bin/act && sudo chmod a+x /usr/local/bin/act
       - name: Run act
-        run: act --workflows ./dist/workflows --secret-file ./dist/.secrets --eventpath ./dist/event.json --env-file ./dist/.env -P ubuntu-20.04=catthehacker/ubuntu:act-22.04-20221008 -P ubuntu-latest=catthehacker/ubuntu:act-22.04-20221008
+        run: act --workflows ./dist/workflows --secret-file ./dist/.secrets --eventpath ./dist/event.json --env-file ./dist/.env -P ubuntu-20.04=catthehacker/ubuntu:act-22.04-20231101 -P ubuntu-latest=catthehacker/ubuntu:act-22.04-20231101

@@ -91,7 +91,7 @@ async function main() {
   try {
     const [chooser] = await Promise.all([
       page.waitForEvent("filechooser", { timeout: 10_000 }),
-      page.click(".upload-btn"),
+      page.click(".bcc-upload-wrapper")
     ])
     fileChooser = chooser
   } catch (error) {
