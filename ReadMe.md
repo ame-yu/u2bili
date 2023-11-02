@@ -11,7 +11,7 @@
 ## 🍔使用
 > 预置环境 node16.x+python3+[jq](https://github.com/stedolan/jq)
 > 
-1. `yarn`或者`npm install`安装node依赖
+1. `yarn`或者`npm install`安装node依赖，`npx playwright install`安装playwright
 2. 安装yt-dlp [文档](https://github.com/yt-dlp/yt-dlp#installation)
 3. 提供cookies：通过 .env 提供或设置`BILIBILI_COOKIE`环境变量
 4. ./u2bili.sh \<url\>
@@ -39,7 +39,6 @@ SESSDATA: "xxxxxx"
 BILIBILI_COOKIE环境变量格式如下：
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
-👆 大概三个月更新一次bili_jct和SESSDATA
 </details>
 
 ## 🍱使用框架 Frameworks
@@ -65,7 +64,7 @@ Actions面板设置Secret `BILIBILI_COOKIE` （必要步骤）
 ```
 DedeUserID=XXX;DedeUserID__ckMd5=XXX;bili_jct=XXX;SESSDATA=XXX
 ```
-👆 Cookie有效期大概3个月（多设备异地登录会提前过期，所以建议使用小号，获取Cookie后本地浏览器删除Cookie不再登录）
+👆 Cookie有效期大概6个月（多设备异地登录会提前过期，所以建议使用小号，获取Cookie后本地浏览器删除Cookie不再登录）
 
 几个重要参数
 - 扫描周期`schedule.cron` [.github/workflows/actionsflow.yml](.github/workflows/actionsflow.yml)
